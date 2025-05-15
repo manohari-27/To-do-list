@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e3f2fd;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .quiz-container {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 400px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .option-btn {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background: #90caf9;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .option-btn:hover {
+      background: #64b5f6;
+    }
+    #next-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #42a5f5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container" id="quiz">
+    <h2 id="question">Question text</h2>
+    <div class="options">
+      <button class="option-btn" onclick="selectAnswer(0)"></button>
+      <button class="option-btn" onclick="selectAnswer(1)"></button>
+      <button class="option-btn" onclick="selectAnswer(2)"></button>
+      <button class="option-btn" onclick="selectAnswer(3)"></button>
+    </div>
+    <button id="next-btn" onclick="nextQuestion()">Next</button>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "what is the primary function of a compiler?",
+        options: ["To execute code directly", "To translate high-level code to machine code", "To manage file system operations.", "To create user interfaces."],
+        answer:1
+      },
+      {
+        question: "what data structure is typically used to implement a queue?",
+        options: ["Stack", "Tree", "array", "linked list"],
+        answer:3
+      },
+      {
+        question: "what does RAM stand for?",
+        options: ["Remote Access Memory", "Ready-Only Memory", "Random Access Memory", "Register Access Memory"],
+        answer:2
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionBtns = document.querySelectorAll(".option-btn");
+    const nextBtn = document.getElementById("next-btn");
+
+    function loadQuestion() {
+      const q = quizData[currentQuestion];
+      questionEl.textContent = q.question;
+      optionBtns.forEach((btn, index) => {
+        btn.textContent = q.options[index];
+        btn.disabled = false;
+        btn.style.background = "#90caf9";
+      });
+      nextBtn.style.display = "none";
+    }
+
+    function selectAnswer(selected) {
+      const correct = quizData[currentQuestion].answer;
+      optionBtns.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === correct) {
+          btn.style.background = "#66bb6a";
+        } else if (i === selected && selected !== correct) {
+          btn.style.background = "#ef5350";
+        }
+      });
+      if (selected === correct) {
+        score++;
+      }
+      nextBtn.style.display = "inline-block";
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      document.getElementById("quiz").innerHTML = `
+        <h2>Quiz Completed!</h2>
+        <p>Your score: ${score} / ${quizData.length}</p>
+        <button onclick="restartQuiz()">Restart</button>
+      `;
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      location.reload();
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
